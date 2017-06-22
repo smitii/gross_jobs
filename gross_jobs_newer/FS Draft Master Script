@@ -1,0 +1,114 @@
+//main code 
+
+void setup()
+{
+// MAX6969: D22 - 41
+	pinMode(50, OUTPUT);
+	pinMode(51, OUTPUT);
+	pinMode(52, OUTPUT);
+	pinMode(53, OUTPUT);
+// Stepper Drive: D4 - 7
+	pinMode(4, OUTPUT);
+	pinMode(5, OUTPUT);
+	pinMode(6, OUTPUT);
+	pinMode(7, OUTPUT)
+// 3 Photodiodes: A0 - A2
+	pinMode(0, OUTPUT);
+	pinMode(1, OUTPUT);
+	pinMode(2, OUTPUT);
+//MP3 Shield
+randomSeed(analogRead(0)); // any free analog pin - to help randomize MP3 track    selection - no need to set pinMode
+// MAX6969: D22 - 41
+	pinMode(22, OUTPUT);
+	pinMode(23, OUTPUT);
+	pinMode(24, OUTPUT);
+	pinMode(25, OUTPUT);
+	pinMode(26, OUTPUT);
+	pinMode(27, OUTPUT);
+	pinMode(28, OUTPUT);
+	pinMode(29, OUTPUT);
+	pinMode(30, OUTPUT);
+	pinMode(31, OUTPUT);
+	pinMode(32, OUTPUT);
+	pinMode(33, OUTPUT);
+	pinMode(34, OUTPUT);
+	pinMode(35, OUTPUT);
+	pinMode(36, OUTPUT);
+	pinMode(37, OUTPUT);
+	pinMode(38, OUTPUT);
+	pinMode(39, OUTPUT);
+	pinMode(40, OUTPUT);
+	pinMode(41, OUTPUT);
+}	
+	
+void loop
+IF: mouth is closed
+	Open mouth
+IF: Small ball is detected:
+	FLAG small ball = TRUE; FLAG large ball = FALSE
+	Servo closes mouth
+
+Begin Esophagus Green LEDs 
+IF: millis = 1000 and ticks = 8
+	play Gulp MP3
+
+IF: millis = 3000 and ticks = 24
+	Begin Stomach Green LEDs
+IF: millis = 3000 and ticks = 24
+	play Digestion MP3
+
+IF: millis = 6375 and ticks = 51
+	Begin Small Intestine Red LEDs 
+//keep LEDs on till 16500 millis and 132 ticks
+IF: millis = 6375 and ticks = 51
+	Stop MP3 - no sound
+
+IF: millis = 12000 and ticks = 96
+	play alarm sounds MP3 in large intestine
+
+IF: millis = 16500 and ticks = 132
+	Turn Poop Carousel 90 degrees - 1st poop ball
+IF: millis = 16500 and ticks = 132
+	play Fart MP3
+
+IF: millis = 17000 and ticks = 136
+	Turn Poop Carousel 90 degrees - 2nd poop ball
+IF: millis = 17000 and ticks = 136
+	Continue Fart MP3
+
+IF: millis = 17500 and ticks = 140
+	Turn Poop Carousel 90 degrees - 3rd poop ball
+IF: millis = 17500 and ticks = 140
+	Continue Fart MP3
+
+
+
+
+	
+	
+	IF
+	FLAG + COUNTER
+	Small intestine: LEDsNo sound for 5 seconds [approx. 40 ticks]
+	Small intestine: Red LEDs and Alarm MP3 sounds (4 seconds) [approx. 32 ticks]
+
+
+
+
+
+
+
+//subroutines 
+//mouth flap
+//ball sensors
+//LED sequences
+	void LEDs { 
+ 		Void LEDfart() =  { 
+...
+}
+		void LEDnonfart() = {
+...
+}
+	}
+// sounds
+//poop
+// reset mouth flap
