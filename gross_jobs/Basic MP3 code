@@ -1,0 +1,21 @@
+#include <SPI.h>
+#include <SdFat.h>
+#include <SdFatUtil.h>
+#include <SFEMP3Shield.h>
+SdFat sd;
+SFEMP3Shield MP3player;
+
+void setup() 
+{
+  Serial.begin(9600); // set the data rate in bits per second for serial data transmission
+  //start the shield
+  randomSeed(analogRead(0));
+  sd.begin(SD_SEL, SPI_HALF_SPEED);
+  MP3player.begin();
+}
+
+void loop()
+{
+  //start playing track 1
+  MP3player.playTrack(random(1,8)); //randomly plays a track from 1-7 inclusive
+}

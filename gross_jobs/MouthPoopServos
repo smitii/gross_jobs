@@ -1,0 +1,111 @@
+/*
+--Reflectance Sensor--
+This example is designed for use with eight QTR-1RC sensors or the eight sensors of a
+QTR-8RC module.  These reflectance sensors should be connected to digital inputs 3 to 10.
+The QTR-8RC's emitter control pin (LEDON) can optionally be connected to digital pin 2, 
+or you can leave it disconnected and change the EMITTER_PIN #define below from 2 to 
+QTR_NO_EMITTER_PIN.
+The main loop of the example reads the raw sensor values (uncalibrated).
+You can test this by taping a piece of 3/4" black electrical tape to a piece of white 
+paper and sliding the sensor across it.  It prints the sensor values to the serial 
+monitor as numbers from 0 (maximum reflectance) to 2500 (minimum reflectance).
+
+--Mouth Servo--
+Servo at the mouth that closes door after 
+QTR Reflectance Sensor detects a food ball.
+Reopens after the food has processed 
+and another food ball can go through.
+
+--Poop Servo--
+Poop balls stored in a hopper above a disc#1 with one hole.
+Servo will move disc#1 at 0 degress directly under hopper to 90(or other) degrees,
+so that it is above the visible poop compartment and poop ball drops there.
+A disc#2 below disc#1 with enough space between the two to allow transportation
+of only one poop ball.
+Poopservo first gets signal from the mouth IR sensor. 
+From the time that it receives a LOW signal, it will wait ____ sec 
+to drop one or ___# of poop balls.
+*/
+
+#include <QTRSensors.h>
+#include <Servo.h>
+
+#define NUM_SENSORS   1     // number of sensors used
+#define TIMEOUT       2500  // waits for 2500 microseconds for sensor outputs to go low
+#define EMITTER_PIN   2 
+
+// sensors 0 through 7 are connected to digital pins 3 through 10, respectively
+QTRSensorsRC qtrrc((unsigned char[]) {31},
+  NUM_SENSORS, TIMEOUT, EMITTER_PIN); 
+unsigned int sensorValues[NUM_SENSORS];
+
+const int led = 53;
+
+const int notificationLED = 22;
+
+Servo mouthservo; //servo that closes mouth
+Servo poopservo; //servo that controls poop ball dispensing
+
+int angle = 0; // mouth open; poop servo under hopper opening
+
+void setup()
+{
+  delay(500);
+  Serial.begin(9600); // set the data rate in bits per second for serial data transmission
+  delay(1000);
+  pinMode(led, OUTPUT);
+    pinMode(notificationLED, OUTPUT);
+    digitalWrite(led, HIGH);
+  mouthservo.attach(9);
+  poopservo.attach(10); //for these two pins, timer2 (8bit) on mega can be used for control
+}
+
+void loop()
+{
+  // read raw sensor values
+  qtrrc.read(sensorValues);
+
+  // print the sensor values as numbers from 0 to 2500, where 0 means maximum reflectance and
+  // 1023 means minimum reflectance
+  for (unsigned char i = 0; i < NUM_SENSORS; i++)
+  {
+    //Serial.print(sensorValues[i]);
+    //Serial.print('\t'); // tab to format the raw data into columns in the Serial monitor
+    
+   if(sensorValues[i] < 360)
+    {
+      digitalWrite(notificationLED, HIGH);
+      Serial.print("Found");
+      for(angle = 0; angle < 100; angle += 1)//If food is found, mouthservo closes mouth
+        {
+          mouthservo.write(angle);
+          delay(20);
+        }
+        delay(25000); //waits for 25 sec (approx time food takes to process)
+      for(angle = 0; angle < 95; angle += 1) //After 25 sec of food being found,
+        {                                    //poop servo
+          poopservo.write(angle);            //rotates from hopper opening to 
+          delay(500);                         // the opening of the box that holds the poop
+        }
+      for(angle = 95; angle >= 1; angle -= 1) //rotates back to hopper opening
+        {                                      
+          poopservo.write(angle);
+          delay(20);                      //waits ____ sec to move to box opening
+        }
+      for(angle = 100; angle >= 1; angle -= 1) // Servo opens mouth again to let in another food ball
+        {
+          mouthservo.write(angle);
+          delay(20);
+        }
+    }
+    else
+    {
+      digitalWrite(notificationLED, LOW);
+      mouthservo.write(angle = 0); // If no food is found, mouthservo keeps mouth open.
+      poopservo.write(angle = 0); // If not food is found, poop servo stays under hopper.
+    }
+  }
+  Serial.println();
+  
+  delay(1000); //Reflectance sensor checks every second?
+}
